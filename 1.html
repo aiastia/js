@@ -4,22 +4,34 @@
   <meta charset="UTF-8">
   <title>Viewer</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chardet/2.1.2/chardet.min.js"></script> <!-- 引入chardet库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chardet/2.1.2/chardet.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       var url = getUrlParameter('url');
       if (url) {
-        $.get({
-          url: url,
-          dataType: "arraybuffer", // 设置请求数据类型为arraybuffer
-          success: function(data) {
-            var detect = Chardet.detect(new Uint8Array(data)); // 使用chardet库检测编码类型
-            var str = (new TextDecoder(detect.encoding)).decode(data); // 根据编码类型解码数据
-            $('pre').html(str); // 在pre标签中显示内容
-          }
+        // 将获取文件数据的方法封装成函数
+        getFileData(url, function(data) {
+          var detect = Chardet.detect(new Uint8Array(data)); // 使用chardet库检测编码类型
+          var str = (new TextDecoder(detect.encoding)).decode(data); // 根据编码类型解码数据
+          $('pre').html(str); // 在pre标签中显示内容
         });
       }
     });
+
+    function getFileData(url, callback) {
+      // 将base64编码url解码
+      var decodedUrl = atob(url);
+      // 在browser中使用encodeURIComponent方法编码url，避免url参数中的特殊字符造成影响
+      var encodedUrl = encodeURIComponent(decodedUrl);
+      // 获取文件数据并调用回调函数处理数据
+      $.get({
+        url: encodedUrl,
+        dataType: "arraybuffer",
+        success: function(data) {
+          callback(data);
+        }
+      });
+    }
     
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
