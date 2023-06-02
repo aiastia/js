@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Viewer</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chardet/2.1.2/chardet.min.js"></script> <!-- 引入chardet库 -->
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var url = getUrlParameter('url');
+      if (url) {
+        $.get({
+          url: url,
+          dataType: "arraybuffer", // 设置请求数据类型为arraybuffer
+          success: function(data) {
+            var detect = Chardet.detect(new Uint8Array(data)); // 使用chardet库检测编码类型
+            var str = (new TextDecoder(detect.encoding)).decode(data); // 根据编码类型解码数据
+            $('pre').html(str); // 在pre标签中显示内容
+          }
+        });
+      }
+    });
+    
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+  </script>
+</head>
+<body>
+  <pre></pre>
+</body>
+</html>
