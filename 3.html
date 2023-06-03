@@ -1,39 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>展示任意链接的txt</title>
+  <meta charset="utf-8">
+  <title>链接预览</title>
 </head>
 <body>
-  <h1>展示任意链接的txt</h1>
   <form>
-    <label>请输入链接地址：</label>
-    <input type="text" id="url" name="url">
-    <input type="button" value="显示文本" onclick="showText()">
+    <label for="link-input">请输入链接：</label>
+    <input type="text" id="link-input" name="link" placeholder="https://example.com/">
+    <button type="button" onclick="previewLink()">预览</button>
   </form>
   <hr>
-  <div id="text"></div>
+  <div id="preview-div"></div>
+
   <script>
-    function showText() {
-      var url = document.getElementById("url").value;
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var content = xhr.responseText;
-          var encoding = xhr.getResponseHeader("Content-Type");
-          if (encoding.indexOf("charset=") !== -1) {
-            encoding = encoding.substring(encoding.indexOf("charset=") + 8);
-          } else {
-            encoding = "UTF-8";
-          }
-          content = decodeURIComponent(escape(content));
-          var pre = document.createElement("pre");
-          pre.textContent = content;
-          document.getElementById("text").appendChild(pre);
-        }
-      };
-      xhr.open("GET", url, true);
-      xhr.send();
+    function previewLink() {
+      var link = document.getElementById("link-input").value;
+      fetch(link)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          var decoder = new TextDecoder("gb2312");
+          var data = decoder.decode(buffer);
+          var previewDiv = document.getElementById("preview-div");
+          previewDiv.innerHTML = "<pre>" + data + "</pre>";
+        })
+        .catch(error => console.error(error));
     }
   </script>
 </body>
