@@ -3,6 +3,13 @@
 <head>
   <meta charset="utf-8">
   <title>链接预览</title>
+  <style>
+    #preview-div {
+      width: 80%;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
 </head>
 <body>
   <hr>
@@ -18,7 +25,7 @@
           var decoder = new TextDecoder("utf-8");
           var data = decoder.decode(buffer);
           var previewDiv = document.getElementById("preview-div");
-          previewDiv.innerHTML = "<pre>" + data + "</pre>";
+          previewDiv.textContent = data;
         })
         .catch(error => console.error(error));
     } else {
