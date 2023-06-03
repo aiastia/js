@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>链接预览</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+    }
+    #preview-div {
+      width: 80%;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body class="black-background">
+  <hr>
+  <div id="preview-div"></div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var link = params.get('link');
+    if (link) {
+      fetch(link)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          var decoder = new TextDecoder("utf-8");
+          var data = decoder.decode(buffer);
+          var previewDiv = document.getElementById("preview-div");
+          previewDiv.textContent = data;
+        })
+        .catch(error => console.error(error));
+    } else {
+      var previewDiv = document.getElementById("preview-div");
+      previewDiv.innerHTML = "请提供要预览的链接。";
+    }
+
+    // 检测页面的背景颜色，并将文本颜色相应地设置为白色或黑色
+    var body = document.querySelector('body');
+    var backgroundColor = getComputedStyle(body).getPropertyValue('background-color');
+    if (backgroundColor === 'rgb(255, 255, 255)' || backgroundColor === 'rgb(240, 240, 240)') {
+      body.classList.remove('black-background');
+      body.classList.add('white-background');
+      var previewDiv = document.getElementById("preview-div");
+      previewDiv.style.color = '#555';
+    }
+  </script>
+</body>
+</html>
