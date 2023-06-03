@@ -1,68 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Text Viewer</title>
+<head>
+  <meta charset="utf-8">
+  <title>链接预览</title>
+  <style>
+    #preview-div {
+      width: 80%;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <hr>
+  <div id="preview-div"></div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js"
-      integrity="sha256-n6RHnZT2wf6C9QjFj1jlaQyURbQ07FPe5Qhwre6+h1g="
-      crossorigin="anonymous"
-    ></script>
-
-    <style>
-      #editor {
-        width: 100%;
-        height: 600px;
-      }
-
-      .arrow {
-        text-decoration: none;
-        font-size: 1.5em;
-        color: #666;
-        margin: 0 10px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <textarea id="editor"></textarea>
-    <a id="prev" href="#prev" class="arrow">‹</a>
-    <a id="next" href="#next" class="arrow">›</a>
-
-    <script>
-      var params =
-        URLSearchParams &&
-        new URLSearchParams(document.location.search.substring(1));
-      var url =
-        params && params.get("url") && decodeURIComponent(params.get("url"));
-      console.log(url);
-
-      var currentIndex =
-        params && params.get("loc") ? params.get("loc") : undefined;
-
-      fetch(url)
-        .then((response) => response.text())
-        .then((text) => {
-          document.getElementById("editor").textContent = text;
-        });
-
-      document.getElementById("prev").addEventListener("click", (e) => {
-        currentIndex--;
-        window.location.replace(
-          `index.html?loc=${currentIndex}&url=${encodeURIComponent(url)}`
-        );
-        e.preventDefault();
-      });
-
-      document.getElementById("next").addEventListener("click", (e) => {
-        currentIndex++;
-        window.location.replace(
-          `index.html?loc=${currentIndex}&url=${encodeURIComponent(url)}`
-        );
-        e.preventDefault();
-      });
-    </script>
-  </body>
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var link = params.get('link');
+    if (link) {
+      fetch(link)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          var decoder = new TextDecoder("GB2312");
+          var data = decoder.decode(buffer);
+          var previewDiv = document.getElementById("preview-div");
+          previewDiv.textContent = data;
+        })
+        .catch(error => console.error(error));
+    } else {
+      var previewDiv = document.getElementById("preview-div");
+      previewDiv.innerHTML = "请提供要预览的链接。";
+    }
+  </script>
+</body>
 </html>
