@@ -15,7 +15,7 @@
       fetch(link)
         .then(response => response.arrayBuffer())
         .then(buffer => {
-          var decoder = new TextDecoder("gb2312");
+          var decoder = new TextDecoder("utf-8");
           var data = decoder.decode(buffer);
           var previewDiv = document.getElementById("preview-div");
           previewDiv.innerHTML = "<pre>" + data + "</pre>";
