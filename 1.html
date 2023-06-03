@@ -1,47 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Viewer</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chardet/2.1.2/chardet.min.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function() {
-      var url = getUrlParameter('url');
-      if (url) {
-        // 将获取文件数据的方法封装成函数
-        getFileData(url, function(data) {
-          var detect = Chardet.detect(new Uint8Array(data)); // 使用chardet库检测编码类型
-          var str = (new TextDecoder(detect.encoding)).decode(data); // 根据编码类型解码数据
-          $('pre').html(str); // 在pre标签中显示内容
-        });
-      }
-    });
-
-    function getFileData(url, callback) {
-      // 将base64编码url解码
-      var decodedUrl = atob(url);
-      // 在browser中使用encodeURIComponent方法编码url，避免url参数中的特殊字符造成影响
-      var encodedUrl = encodeURIComponent(decodedUrl);
-      // 获取文件数据并调用回调函数处理数据
-      $.get({
-        url: encodedUrl,
-        dataType: "arraybuffer",
-        success: function(data) {
-          callback(data);
-        }
-      });
-    }
-    
-    function getUrlParameter(name) {
-      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-      var results = regex.exec(location.search);
-      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
-  </script>
+  <meta charset="utf-8">
+  <title>链接预览</title>
 </head>
 <body>
-  <pre></pre>
+  <hr>
+  <div id="preview-div"></div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var link = params.get('link');
+    if (link) {
+      fetch(link)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          var decoder = new TextDecoder("gb2312");
+          var data = decoder.decode(buffer);
+          var previewDiv = document.getElementById("preview-div");
+          previewDiv.innerHTML = "<pre>" + data + "</pre>";
+        })
+        .catch(error => console.error(error));
+    } else {
+      var previewDiv = document.getElementById("preview-div");
+      previewDiv.innerHTML = "请提供要预览的链接。";
+    }
+  </script>
 </body>
 </html>
