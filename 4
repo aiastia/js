@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>链接预览</title>
+</head>
+<body>
+  <hr>
+  <div id="preview-div"></div>
+
+  <script>
+    var params = new URLSearchParams(window.location.search);
+    var link = params.get('link');
+    if (link) {
+      fetch(link)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          var decoder = new TextDecoder("gb2312");
+          var data = decoder.decode(buffer);
+          var previewDiv = document.getElementById("preview-div");
+          previewDiv.innerHTML = "<pre>" + data + "</pre>";
+        })
+        .catch(error => console.error(error));
+    } else {
+      var previewDiv = document.getElementById("preview-div");
+      previewDiv.innerHTML = "请提供要预览的链接。";
+    }
+  </script>
+</body>
+</html>
