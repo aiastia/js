@@ -9,9 +9,13 @@
       color: #fff;
     }
     #preview-div {
-      width: 80%;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      width: 500px; /* 设置预览框的宽度 */
+      word-wrap: break-word; /* 让文本自动换行 */
+      overflow: hidden; /* 隐藏溢出的内容 */
+    }
+    /* 如果背景是白色，将文本颜色设置为黑色 */
+    body.white-background #preview-div {
+      color: #000;
     }
   </style>
 </head>
@@ -39,12 +43,9 @@
 
     // 检测页面的背景颜色，并将文本颜色相应地设置为白色或黑色
     var body = document.querySelector('body');
-    var backgroundColor = getComputedStyle(body).getPropertyValue('background-color');
-    if (backgroundColor === 'rgb(255, 255, 255)' || backgroundColor === 'rgb(240, 240, 240)') {
+    if (getComputedStyle(body).getPropertyValue('background-color') === 'rgb(255, 255, 255)') {
       body.classList.remove('black-background');
       body.classList.add('white-background');
-      var previewDiv = document.getElementById("preview-div");
-      previewDiv.style.color = '#555';
     }
   </script>
 </body>
